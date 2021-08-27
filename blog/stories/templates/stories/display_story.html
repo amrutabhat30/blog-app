@@ -1,0 +1,151 @@
+<!-- This page shows details abt a single story. Gives an option to comment on the story and also view, edit,
+delete the top 10 previous comments -->
+
+{% extends "base.html" %}
+
+{% block title %} Story details {% endblock %}
+
+
+{% block content %}
+    {% load staticfiles %}
+{% load verbose_names %}
+    <!-- View Story -->
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+        <h2>Story details <a href="{% url 'edit_story_view' story.id %}">
+            <img border="0" alt="Edit" src="{%  static "stories/images/edit.png" %}"
+                 width="25" height="25" title="Edit">
+            </a>
+        </h2>
+        <div class="panel panel-default" style="width:800px">
+            <div class="panel-heading "> {{ story.title }}
+
+            </div>
+            <div class="panel-body ">
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="row">
+                            <!-- get_verbose_field_name is custom template filter to get verbose name of model field -->
+                            <label class="control-label col-sm-5" for="link">
+                                {% get_verbose_field_name story "link" %}:
+                            </label>
+                            <div class="col-sm-7">
+                               <a href="http://{{ story.link }}">{{ story.link }}</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-5" for="up_vote">
+                                {% get_verbose_field_name story "up_vote" %}:
+                            </label>
+                            <div class="col-sm-7">
+                                {{ story.up_vote }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-5" for="down_vote">
+                                {% get_verbose_field_name story "down_vote" %}:
+                            </label>
+                            <div class="col-sm-7">
+                                {{ story.down_vote }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-5" for="created_on">
+                                {% get_verbose_field_name story "created_on" %}:
+                            </label>
+                            <div class="col-sm-7">
+                                {{ story.created_on }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-5" for="modified_on">
+                                {% get_verbose_field_name story "modified_on" %}:
+                            </label>
+                            <div class="col-sm-7">
+                                {{ story.modified_on }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <!-- Create comment -->
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+
+        <h3>Comment on the story</h3>
+                <div class="row">
+                    <form class="form-horizontal" role="form" method="post" action="{% url 'create_comment_view' story.id %}">
+                    {%  csrf_token %}
+                    <div class="form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            {{ form.text }}
+                        </div>
+                        {% if form.text.errors %}
+                        <div class="col-sm-4">
+                            {{ form.text.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                        <button type="submit" class="btn btn-default" >
+                            {% if param == 'edit' %}
+                                Save
+                            {% else %}
+                            Post
+                            {% endif %}
+                        </button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+        </div>
+    </div>
+
+    <!-- View Comments -->
+     <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+         {% load staticfiles %}
+            <div class="panel panel-default panel-shadow " style="width:800px">
+                <div class="panel-heading  "> Previous Comments </div>
+                <div class="panel-body " style="display:block">
+                    {% get_comments story.id as comments  %} <!-- custom template filter to get all comments -->
+                    {% for comment in comments %}
+                     <div class="row">
+                           <div class="col-sm-6">
+                                {{ comment.text }}
+                           </div>
+
+                           <div class="col-sm-3">
+                               {{ comment.posted_on |timesince }} ago
+                           </div>
+                            <div class="col-sm-3">
+                                <a href="{% url 'edit_comment_view' story.id comment.id %}">
+                                <img border="0" alt="Edit" src="{%  static "stories/images/edit.png" %}"
+                                     width="25" height="25" title="Edit">
+                                </a>
+                                <a href="{% url 'delete_comment_view' story.id comment.id %}">
+                                <img border="0" alt="Delete" src="{%  static "stories/images/delete.png" %}"
+                                     width="25" height="25" title="Delete">
+                                </a>
+                            </div>
+
+                     </div>
+                        <br>
+                     {% endfor %}
+                </div>
+            </div>
+        </div>
+     </div>
+{%  endblock  %}

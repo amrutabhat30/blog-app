@@ -1,0 +1,50 @@
+<!-- This page is to view top 25 comments on a story -->
+
+{% extends "base.html" %}
+
+{% block title %}Comments{% endblock %}
+
+{% block content %}
+<div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4">
+            <a href="{% url 'get_story_view' story.id %}" title="Add comment"> Add Comment</a>
+        </div>
+</div>
+<div class="row">
+     <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+         {% load staticfiles %}
+            <div class="panel panel-default panel-shadow " style="width:800px">
+                <div class="panel-heading  "> Comments </div>
+                <div class="panel-body " style="display:block">
+                    {% if message %}{{ message }} {% endif %}
+                    {% for comment in comments %}
+                     <div class="row">
+
+                           <div class="col-sm-6">
+                                {{ comment.text }}
+                           </div>
+
+                           <div class="col-sm-3">
+                               {{ comment.posted_on |timesince }} ago
+                           </div>
+                           <div class="col-sm-3">
+                                <a href="{% url 'edit_comment_view' story.id comment.id %}">
+                                <img border="0" alt="Edit" src="{%  static "stories/images/edit.png" %}"
+                                     width="25" height="25" title="Edit">
+                                </a>
+                                <a href="{% url 'delete_comment_view' story.id comment.id %}">
+                                <img border="0" alt="Delete" src="{%  static "stories/images/delete.png" %}"
+                                     width="25" height="25" title="Delete">
+                                </a>
+                           </div>
+
+                     </div>
+                        <br>
+                     {% endfor %}
+                </div>
+            </div>
+        </div>
+     </div>
+{% endblock %}

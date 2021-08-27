@@ -1,0 +1,57 @@
+<!-- This page is to create a story by giving a title and a link -->
+
+
+{% extends "base.html" %}
+
+
+{% block title %}
+    {% if param == 'edit' %}
+    Edit story
+    {%  else %}
+    Create story
+    {%  endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+    <h2>Create a story </h2>
+        <form class="form-horizontal" role="form" method="post" action=".">
+               {%  csrf_token %}
+               <div class="form-group">
+                    <label class="control-label col-sm-2" for="title"> {{ form.title.label }}</label>
+                    <div class="col-sm-10">
+                        {{ form.title }}
+                    </div>
+                   {% if form.title.errors %}
+                    <div class="col-sm-4">
+                        {{ form.title.errors }}
+                    </div>
+                   {% endif %}
+               </div>
+               <div class="form-group">
+                    <label class="control-label col-sm-2" for="link">  {{ form.link.label }}</label>
+                    <div class="col-sm-10">
+                     {{ form.link }}
+                    </div>
+                    {% if form.link.errors %}
+                    <div class="col-sm-4">
+                        {{ form.link.errors }}
+                    </div>
+                   {% endif %}
+               </div>
+               <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-default" title="Create story" >
+                            {% if param == 'edit' %}
+                                Save
+                            {% else %}
+                            Submit
+                            {% endif %}
+                        </button>
+                    </div>
+               </div>
+        </form>
+    </div>
+{% endblock %}
+
+

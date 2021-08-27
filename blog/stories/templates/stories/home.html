@@ -1,0 +1,127 @@
+<!-- This is the home as well as admin page
+home page- which displays top 5 stories excluding the ones archived by the admin, also shows options to view details,
+comments,edit and delete a story.
+admin page - in addition to home page features, gives admin a checkbox to archive the stories not be shown in the
+home page and a save button to save archived stories -->
+
+{% extends "base.html" %}
+
+{% block title %}Stories{% endblock %}
+
+{% block content %}
+    <div class="row">
+     <div class="col-sm-1"></div>
+    <div class="col-sm-8">
+        <h2>Stories</h2>
+      {% if message %}<p>{{ message }} </p>{% endif %}
+        {% if stories %}
+        {% if param == 'admin' %}
+            <form method="post" action=".">
+            {% csrf_token %}
+        {% endif %}
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th width="200">Title</th>
+                    <th width="200">Link</th>
+                    <th width="100">Up Votes</th>
+                    <th width="100">Down Votes</th>
+                    <th width="100">Actions</th>
+                    {% if param == 'admin' %}
+                           <th >Don't show</th>
+                    {% endif %}
+                    <th>Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% load staticfiles %}
+                {% for story in stories %}
+                    <tr>
+                        <td>
+                             <a href="{% url 'get_story_view' story.id %}" title="View more">
+                                {{  story.title }}
+                             </a>
+                        </td>
+                        <td>
+                            <a href="{{ story.link }}" title="Go to link">
+                                {{ story.link }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ story.up_vote }}
+                            <a href="{% url 'up_vote_story_view' story.id %}">
+                              <img border="0" alt="Up Vote" src="{%  static "stories/images/thumbs_up.png" %}" width="25"
+                                   height="25" title="Up Vote">
+                            </a>
+                        </td>
+                        <td>
+                            {{ story.down_vote }}
+                            <a href="{% url 'down_vote_story_view' story.id %}">
+                                <img border="0" alt="Down Vote" src="{%  static "stories/images/thumbs_down.png" %}"
+                                     width="25" height="25" title="Down Vote">
+                            </a>
+                        </td>
+                        <td >
+                            <a href="{% url 'edit_story_view' story.id %}">
+                                <img border="0" alt="Edit" src="{%  static "stories/images/edit.png" %}"
+                                     width="25" height="25" title="Edit">
+                            </a>
+                            <a href="{% url 'delete_story_view' story.id %}">
+                                <img border="0" alt="Delete" src="{%  static "stories/images/delete.png" %}"
+                                     width="25" height="25" title="Delete">
+                            </a>
+                        </td>
+                        {% if param == 'admin' %} <!-- archive option for Admin -->
+                        <td>
+                               <input type="checkbox" title="Don't show this" name="archives" id="story_{{ story.id }}"
+                                      value="{{ story.id }}" {% if story.archive %}checked{% endif %}/>
+                        </td>
+                        {% endif %}
+                        <td>
+                            <a href="{% url 'comments_view' story.id %}" title="Comments">
+                              View comments
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        {% if param == 'admin' %}
+             <button type="submit" class="btn btn-default" id="target" title="Save">Save</button>
+            </form>
+        {% endif %}
+    {%  endif %}
+        </div>
+        <div class="col-sm-3">
+            <div class="panel panel-default panel-shadow " style="width:220px;height:200px;">
+                <div class="panel-heading  "> Filter stories by time </div>
+                <div class="panel-body " style="display:block">
+                    <div class="row"></div>
+                    <div class="row">
+                         <div class="col-sm-6">
+                            <a href="{% url 'stories_view' %}?duration=1" title="Past 7 hours"> Past 7 hours</a>
+                         </div>
+                    </div>
+
+                    <div class="row">
+                         <div class="col-sm-6">
+                             <a href="{% url 'stories_view' %}?duration=24" title="Past 1 day"> Past 1 day</a>
+                         </div>
+                    </div>
+
+                    <div class="row">
+                         <div class="col-sm-6">
+                            <a href="{% url 'stories_view' %}?duration=168" title="Past 7 days"> Past 7 days</a>
+                         </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
